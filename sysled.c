@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 static const char *sys_led_device = "led1";
 static const char *wifi_led_device = "ath9k_htc-phy0";
@@ -77,6 +78,11 @@ int main(int argc, char **argv) {
     char state[3] = {0};
     bool wifi = false;
     bool led1 = false;
+
+    if (getuid() != 0) {
+        printf("Please run sysled with sudo\n");
+        return 1;
+    }
 
     if (parse_args(argc, argv, state, &wifi, &led1)){
         // Error when parse cli

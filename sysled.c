@@ -8,25 +8,41 @@
 static const char *sys_led_device = "led1";
 static const char *wifi_led_device = "ath9k_htc-phy0";
 
-static uint8_t  parse_args(int argc, char **argv, char *state, bool *all) {
+static void print_usage() {
+    printf("-------------------------\n");
+    printf("Turn on/off LED1 and WiFi adapter LEDs\n"
+           "Options are:\n"
+           "    --help: print this help\n"
+           "    -a: turn on/off LED1 and WiFi adapter leds\n"
+           "    -w: turn on/off WiFi adapter led\n"
+           "    -l: turn on/off LED1 led\n");
+
+}
+
+static uint8_t parse_args(int argc, char **argv, char *state, bool *wifi, bool *led1) {
     int opt;
 
-    while ((opt = getopt(argc, argv, ":a:")) != -1) {
+    while ((opt = getopt(argc, argv, ":a:w:l:")) != -1) {
         switch (opt) {
             case 'a':
-                if (strcmp(optarg, "on") == 0 || strcmp(optarg, "off") == 0) {
-                    strcpy(state, optarg);
-                    *all = true;
-                } else {
-                    printf("USAGE");
-                }
+                *wifi = true;
+                *led1 = true;
+                strcpy(state, optarg);
                 break;
-            case '?':
-                printf("Unknown %c", optopt);
+            case 'w':
+                strcpy(state, optarg);
+                *wifi = true;
                 break;
-            case ':':
-                printf("Falta arg para %c", optopt);
+            case 'l':
+                strcpy(state, optarg);
+                *led1 = true;
+                break;
         }
+    }
+
+    if (strcmp(state, "on") != 0 && strcmp(state, "off") != 0) {
+        print_usage();
+        return 1;
     }
 
     return 0;
@@ -51,7 +67,7 @@ void write_trigger(const char *device, char *trigger, char *state) {
         }
 
     } else {
-        printf("ERROR");
+        printf("ERROR\n");
     }
 
     fclose(fp);
@@ -59,13 +75,19 @@ void write_trigger(const char *device, char *trigger, char *state) {
 
 int main(int argc, char **argv) {
     char state[3] = {0};
-    bool all = false;
+    bool wifi = false;
+    bool led1 = false;
 
-    parse_args(argc, argv, state, &all);
+    if (parse_args(argc, argv, state, &wifi, &led1)){
+        // Error when parse cli
+        return 1;
+    }
 
-    if (all) {
-        write_trigger(sys_led_device, "input", state);
+    if (wifi) {
         write_trigger(wifi_led_device, "phy0tpt", state);
+    }
+    if (led1) {
+        write_trigger(sys_led_device, "input", state);
     }
 
     return 0;

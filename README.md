@@ -7,8 +7,11 @@ $ make
 
 ## Usage
 ```
-$ sysled -a off
-    Changing state of led1 to off
-    Changing state of ath9k_htc-phy0 to off
-$
+-------------------------
+Turn on/off LED1 and WiFi adapter LEDs
+Options are:
+    --help: print this help
+    -a: turn on/off LED1 and WiFi adapter leds
+    -w: turn on/off WiFi adapter led
+    -l: turn on/off LED1 led
 ```

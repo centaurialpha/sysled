@@ -27,3 +27,6 @@ $ sudo sysled -a on # Turn on all leds
 ```
 $ make uninstall
 ```
+
+## Mmmmm
+Yes, I know, I can do it with `sudo sh -c "echo none > /sys/class/leds/led1/trigger"` but I like to complicate myself.

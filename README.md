@@ -29,4 +29,4 @@ $ make uninstall
 ```
 
 ## Mmmmm
-Yes, I know, I can do it with `sudo sh -c "echo none > /sys/class/leds/led1/trigger"` but I like to complicate myself.
+Yes, I know, I can do it with `sudo sh -c "echo none > /sys/class/leds/[the_led]/trigger"` but I like to complicate myself.

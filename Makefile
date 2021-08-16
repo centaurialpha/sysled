@@ -3,6 +3,7 @@ CC = gcc
 CFLAGS = -g -Wall
 HEADERS = power_device.h
 OBJS = power_device.o sysled.o
+PREFIX = ~/.local
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@

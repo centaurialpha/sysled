@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <getopt.h>
+#include <unistd.h>
 #include "power_device.h"
 
 static void print_usage() {

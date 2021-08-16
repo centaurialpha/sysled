@@ -1,24 +1,25 @@
-.POSIX:
+TARGET = sysled
+CC = gcc
+CFLAGS = -g -Wall
+HEADERS = power_device.h
+OBJS = power_device.o sysled.o
 
-SRC = sysled.c
-OBJ = $(SRC:.c=.o)
-PREFIX = ~/.local
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-.c.o:
-	$(CC) $(STCFLAGS) -c $<
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -Wall -o $@
 
-sysled: $(OBJ)
-	$(CC) -o $@ $(OBJ) $(STLDFLAGS)
-
-clean:
-	rm -f sysled $(OBJ)
-
-install: sysled
+install: $(TARGET)
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
-	cp -f sysled $(DESTDIR)$(PREFIX)/bin
-	chmod 755 $(DESTDIR)$(PREFIX)/bin/sysled
+	cp -f $(TARGET) $(DESTDIR)$(PREFIX)/bin
+	chmod 755 $(DESTDIR)$(PREFIX)/bin/$(TARGET)
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/sysled
+	rm -f $(DESTDIR)$(PREFIX)/bin/$(TARGET)
 
-.PHONY: all clean install uninstall
+clean:
+	rm -f $(OBJS)
+	rm -f $(TARGET)
+
+.PHONY: clean

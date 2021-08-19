@@ -6,6 +6,9 @@
 #include <unistd.h>
 #include "power_device.h"
 
+#define WIFI_FLAG 0b01
+#define LED1_FLAG 0b10
+
 static void print_usage() {
     printf("-------------------------\n");
     printf("Turn on/off LED1 and WiFi adapter LEDs\n"
@@ -23,7 +26,7 @@ static bool check_state(char *state) {
     return ok;
 }
 
-static uint8_t parse_args(int argc, char **argv, char *wifi_state, char *led1_state, bool *wifi, bool *led1) {
+static uint8_t parse_args(int argc, char **argv, char *wifi_state, char *led1_state, uint8_t *flags) {
     int opt;
 
     while ((opt = getopt(argc, argv, ":w:l:")) != -1) {
@@ -33,7 +36,7 @@ static uint8_t parse_args(int argc, char **argv, char *wifi_state, char *led1_st
                     print_usage();
                     return 1;
                 }
-                *wifi = true;
+                *flags |= WIFI_FLAG;
                 strcpy(wifi_state, optarg);
                 break;
             case 'l':
@@ -41,7 +44,7 @@ static uint8_t parse_args(int argc, char **argv, char *wifi_state, char *led1_st
                     print_usage();
                     return 1;
                 }
-                *led1 = true;
+                *flags |= LED1_FLAG;
                 strcpy(led1_state, optarg);
                 break;
             case ':':
@@ -60,26 +63,25 @@ static uint8_t parse_args(int argc, char **argv, char *wifi_state, char *led1_st
 int main(int argc, char **argv) {
     char wifi_state[3] = {0};
     char led1_state[3] = {0};
-    bool wifi = false;
-    bool led1 = false;
+    uint8_t flags = 0b0;
 
     if (getuid() != 0) {
         printf("Please run sysled with sudo\n");
         return 1;
     }
 
-    if (parse_args(argc, argv, wifi_state, led1_state, &wifi, &led1)){
+    if (parse_args(argc, argv, wifi_state, led1_state, &flags)){
         // Error when parse cli
         return 1;
     }
 
-    if (wifi) {
+    if (flags & WIFI_FLAG) {
         if (strcmp(wifi_state, "on") == 0)
             turn_on(&wifi_d);
         else
             turn_off(&wifi_d);
     }
-    if (led1) {
+    if (flags & LED1_FLAG) {
         if (strcmp(led1_state, "on") == 0)
             turn_on(&led1_d);
         else
